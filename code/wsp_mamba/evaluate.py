@@ -21,7 +21,8 @@ from evaluation_reports import _metrics, save_evaluation_reports
 from resnet_result_reports import save_result_workbook
 from training_acceleration import PERFORMANCE_KEYS, PrecisionPolicy, transfer_tensor
 from training_console import PhaseProgress
-from wall_runtime import _batch_forward, _batch_loss_sum, _phase_metrics, _phase_start, load_weights, make_criterion, setup_environment
+from wall_runtime import (_batch_forward, _batch_loss_sum, _phase_metrics, _phase_start, load_weights,
+                          make_criterion, setup_environment, training_run_sort_key)
 
 BEST_LOSS_FILE = "best_model.pt"
 BEST_TRANSITION_FILE = "best_transition_f1.pt"
@@ -35,8 +36,8 @@ def completed_runs(output_root, specified):
     if specified:
         candidates = [Path(specified)]
     else:
-        candidates = sorted(Path(output_root).glob("*/training_summary.json"), reverse=True)
-        candidates = [path.parent for path in candidates]
+        candidates = [path.parent for path in Path(output_root).glob("*/training_summary.json")]
+        candidates.sort(key=training_run_sort_key, reverse=True)
     for run in candidates:
         manifest = run / "training_summary.json"
         if not manifest.is_file():

@@ -21,7 +21,7 @@ from resnet_result_reports import require_result_workbook
 from training_acceleration import PERFORMANCE_KEYS, PrecisionPolicy
 from training_console import PhaseProgress
 from wall_runtime import (_batch_forward, _batch_loss_sum, _phase_metrics, _phase_start, load_weights,
-                          make_criterion, make_loader, setup_environment)
+                          make_criterion, make_loader, setup_environment, training_run_sort_key)
 
 
 BEST_LOSS_FILE = "best_model.pt"  # 最低验证损失权重。
@@ -106,7 +106,7 @@ def restore_run(current):
                 accepted.append((path, summary))
     if not accepted:
         raise ValueError(f"找不到 {current['model_name']} 的完整 v10 训练结果，请先运行本模型的 train.py 或检查 EVALUATION_RUN_DIR。")
-    output, summary = max(accepted, key=lambda item: item[0].name)
+    output, summary = max(accepted, key=lambda item: training_run_sort_key(item[0]))
     settings = read_json(output / "config.json")  # 保留训练保存的全部时间窗口和数据规则。
     names = ("device", "evaluation_batch_size", "num_workers", "cpu_threads", "progress_mode",
              "progress_refresh_seconds", "plain_log_interval_seconds", "data_root", "evaluation_epoch", "evaluation_split") + PERFORMANCE_KEYS

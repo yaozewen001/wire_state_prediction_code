@@ -2,6 +2,7 @@
 
 import inspect  # 检查权重读取接口是否支持受限加载。
 import random  # 固定 Python 随机源。
+import re  # 识别结果目录的预测跨度前缀。
 import time  # 使用单调时钟记录训练耗时。
 from collections import deque  # 在线只缓存当前层的有限局部历史。
 from copy import copy  # 只在加载器副本上启用图像字节传输，不改变其他调用的数据接口。
@@ -24,6 +25,20 @@ from training_acceleration import (PERFORMANCE_KEYS, PrecisionPolicy, WindowBatc
 
 
 TRANSITION_F1_CHECKPOINT = "best_transition_f1.pt"  # 训练保存与独立评估共用的权重文件名。
+
+
+def training_run_path(settings, suffix):
+    """生成带预测跨度的训练结果路径，沿用原来的时间戳和运行后缀。"""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")  # 固定宽度便于按时间排序。
+    return Path(settings["output_root"]) / f"H{settings['future_frames']}_{timestamp}_{suffix}"
+
+
+def training_run_sort_key(run):
+    """新旧命名按同一规则排序，预测跨度不参与时间比较。"""
+    name = run.name
+    # 只识别带原时间戳的跨度前缀，手动命名的目录沿用原名称。
+    timestamp_name = re.sub(r"^H[0-9]+_(?=[0-9]{8}_[0-9]{6}_[0-9]{6}_)", "", name)
+    return timestamp_name, name  # 去掉前缀后同名时，以完整目录名确定顺序。
 
 
 def sync_clock(device):  # GPU 异步计算完成后再读取时钟。

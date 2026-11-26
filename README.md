@@ -18,6 +18,8 @@
 3. 在 [code/data_config.py](code/data_config.py) 中设置 `DATA_ROOT`，在 IDE 运行 [code/split_data.py](code/split_data.py) 生成训练、验证和测试划分。
 4. 在所选模型的 `config.py` 设置预测跨度和训练参数，然后运行同目录的 `train.py`。训练完通过 `evaluate.py` 加载权重评估。WSP-Mamba 的两阶段训练、BPM 参考窗和消融配置见[模型说明](code/wsp_mamba/README.md)。
 
+训练结果目录开头的 `H{FUTURE_FRAMES}_` 表示预测跨度。例如预测 20 帧时，目录以 `H20_` 开头，后接原来的时间戳和模型版本或训练阶段。自动评估按时间选择最近一次完成的训练，并兼容旧目录。
+
 功率表示设定值。下面是填写格式示例，示例墙号与数值仅用于说明。
 
 ```csv

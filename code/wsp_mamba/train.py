@@ -1,7 +1,6 @@
 """训练 WSP-Mamba 基础模型，或在冻结编码器上训练 BPM 和分类头。"""
 
 import time
-from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -24,7 +23,7 @@ from data_utils import load_split, read_json, write_csv, write_json
 from training_acceleration import PrecisionPolicy, transfer_tensor
 from training_console import PhaseProgress, print_epoch_summary
 from wall_dataset import image_positions, require_classes, save_window_report
-from wall_runtime import _save_weights, load_weights, make_criterion, setup_environment
+from wall_runtime import _save_weights, load_weights, make_criterion, setup_environment, training_run_path
 
 
 def find_foundation(settings, snapshot):
@@ -151,7 +150,7 @@ def main(settings=None):
     datasets = {split_name: WindowDataset(sequences, windows[split_name], settings, normalization)
                 for split_name in ("train", "val")}
 
-    output = Path(settings["output_root"]) / (datetime.now().strftime("%Y%m%d_%H%M%S_%f") + f"_{stage}")
+    output = training_run_path(settings, stage)
     output.mkdir(parents=True, exist_ok=False)
     print(f"训练结果目录 {output} | 历史 {len(image_positions(settings))} 图 | 预测跨度 {settings['future_frames']} 帧", flush=True)
     for split_name, samples in windows.items():

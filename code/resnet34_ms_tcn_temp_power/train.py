@@ -1,7 +1,6 @@
 """训练本模型，逐轮验证并保存两个选择指标对应的最佳权重。"""
 
 import time  # 分别记录训练和验证耗时。
-from datetime import datetime  # 每次训练生成独立目录。
 from pathlib import Path  # 处理训练记录和权重路径。
 
 import numpy as np  # 汇总训练类别数量和损失。
@@ -28,7 +27,7 @@ from training_acceleration import PrecisionPolicy
 from training_console import PhaseProgress, print_epoch_summary
 from wall_dataset import require_classes, save_window_report
 from wall_runtime import (_batch_forward, _batch_loss_sum, _phase_start, _save_weights, load_weights,
-                          make_criterion, make_loader, setup_environment)
+                          make_criterion, make_loader, setup_environment, training_run_path)
 
 
 PERFORMANCE_METRICS = (
@@ -55,7 +54,7 @@ def main():  # 在 IDE 运行本文件启动训练。
     windows, skipped = build_windows(sequences, settings)
     require_classes(windows, len(settings["class_names"]))
     normalization = fit_normalization(sequences, windows["train"], settings)
-    output = Path(settings["output_root"]) / (datetime.now().strftime("%Y%m%d_%H%M%S_%f") + "_" + settings["model_name"] + "_v10")
+    output = training_run_path(settings, f"{settings['model_name']}_v{FORMAT_VERSION}")
     output.mkdir(parents=True, exist_ok=False)
     write_json(output / "config.json", settings)
     write_json(output / "split_snapshot.json", split)
