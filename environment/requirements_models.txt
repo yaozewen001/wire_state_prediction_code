@@ -1,0 +1,4 @@
+# 可选模型库；只有需要这些实现时才安装，三个当前基准不依赖它们。
+# 请同时使用 constraints.txt，防止可选库升级 torch、torchvision 或 NumPy。
+timm==1.0.15
+segmentation-models-pytorch==0.4.0

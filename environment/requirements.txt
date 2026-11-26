@@ -1,0 +1,13 @@
+# 当前模型的普通依赖；torch 与 torchvision 使用云镜像或按 README 单独安装。
+numpy==1.26.4
+Pillow==10.4.0
+scikit-learn==1.5.2
+matplotlib==3.9.2
+scipy==1.13.1
+# 以下为后续数据表格、进度显示和配置文件常用工具，当前基线不是全部直接使用。
+pandas==2.2.3
+tqdm==4.67.1
+PyYAML==6.0.2
+
+# ResNet34 的评估结果 Excel 总表。
+openpyxl==3.1.5
